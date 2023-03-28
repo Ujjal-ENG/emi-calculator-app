@@ -9,7 +9,18 @@ const App = () => {
     const [tenure, setTenure] = useState(12);
     const [emi, setEmi] = useState(0);
 
-    const calculateEmi = (value) => {};
+    const calculateEmi = (downPayment) => {
+        // P x R x (1+R)^N / [(1+R)^N-1]
+        if (!cost) return;
+
+        const loadAmt = cost - downPayment;
+        const rateOfInterrest = interest / 100;
+        const numOfYears = tenure / 12;
+
+        const EMI = (loadAmt * rateOfInterrest * [(1 + rateOfInterrest) ** numOfYears]) / [(1 + rateOfInterrest) ** numOfYears - 1];
+
+        return Number(EMI / 12).toFixed(0);
+    };
 
     const updateEmi = (e) => {
         if (!cost) return;
@@ -18,6 +29,8 @@ const App = () => {
         setDownPayment(dp.toFixed(0));
 
         // calculate emi and update it also
+        const emi = calculateEmi(dp);
+        setEmi(emi);
     };
     const updateDownPayment = (e) => {
         if (!cost) return;
@@ -29,8 +42,8 @@ const App = () => {
     };
 
     return (
-        <>
-            <h1 className="text-5xl text-center font-semibold">Emi Calculator</h1>
+        <div className="flex justify-center items-center flex-col">
+            <h1 className="text-5xl text-center font-semibold my-5">Emi Calculator</h1>
 
             <p className="text-xl font-bold">Total Cost of Asset</p>
             <input type="number" className="border rounded-md my-4 border-black focus:outline-orange-500" value={cost} onChange={(e) => setCost(e.target.value)} placeholder="Total Cost of Assets" />
@@ -66,12 +79,12 @@ const App = () => {
 
                 <div className="absolute flex justify-between gap-6">
                     <label htmlFor="0%">{calculateEmi(cost)}</label>
-                    <strong htmlFor="downPayment">{downPayment}tk</strong>
+                    <strong htmlFor="downPayment">{emi}tk</strong>
                     <label htmlFor="100%">{calculateEmi(0)}</label>
                 </div>
             </div>
 
-            <p className="text-xl font-bold">Tenure</p>
+            <p className="text-xl font-bold my-5">Tenure</p>
             {tenureData.map((t, i) => {
                 return (
                     <button
@@ -79,15 +92,15 @@ const App = () => {
                         type="button"
                         className={`${
                             t === tenure
-                                ? 'px-4 py-1 border rounded-md mx-4 cursor-pointer bg-lime-400 text-white font-bold my-2'
-                                : 'px-4 py-1 border rounded-md mx-4 cursor-pointer active:bg-orange-500 my-2'
+                                ? 'px-4 py-1 border rounded-md flex mx-4 cursor-pointer bg-lime-400 text-white font-bold my-2'
+                                : 'px-4 py-1 border rounded-md flex  mx-4 cursor-pointer active:bg-orange-500 my-2'
                         }`}
                         onClick={() => setTenure(t)}>
                         {t}
                     </button>
                 );
             })}
-        </>
+        </div>
     );
 };
 
