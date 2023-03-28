@@ -32,6 +32,13 @@ const App = () => {
         const emi = calculateEmi(dp);
         setEmi(emi);
     };
+
+    const calculateDownPayment = (emi) => {
+        if (!cost) return;
+
+        const downPaymentPercent = 100 - (emi / calculateEmi(0)) * 100;
+        return Number((downPaymentPercent / 100) * 100).toFixed(0);
+    };
     const updateDownPayment = (e) => {
         if (!cost) return;
 
@@ -39,6 +46,8 @@ const App = () => {
         setEmi(emi.toFixed(0));
 
         // calculate downPayment and update it
+        const dp = calculateDownPayment(emi);
+        setDownPayment(dp);
     };
 
     return (
